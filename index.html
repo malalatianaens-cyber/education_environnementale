@@ -1,0 +1,2567 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dispositif d'Évaluation en Changement de Comportement – Madagascar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================
+   CSS VARIABLES & RESET
+=========================== */
+:root {
+  --forest: #1B5E20;
+  --forest-light: #2E7D32;
+  --leaf: #4CAF50;
+  --leaf-light: #81C784;
+  --beige: #F5F1E8;
+  --sand: #E8DFC8;
+  --sky: #4FC3F7;
+  --sky-dark: #0288D1;
+  --solar: #FFC107;
+  --solar-dark: #F57F17;
+  --charcoal: #263238;
+  --slate: #546E7A;
+  --lightgray: #F8F9FA;
+  --white: #FFFFFF;
+  --shadow-sm: 0 2px 12px rgba(27,94,32,0.08);
+  --shadow-md: 0 8px 32px rgba(27,94,32,0.13);
+  --shadow-lg: 0 20px 60px rgba(27,94,32,0.18);
+  --radius: 16px;
+  --radius-sm: 8px;
+  --transition: 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--charcoal);
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* ===========================
+   STICKY HEADER
+=========================== */
+#site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 900;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid rgba(27,94,32,0.08);
+  box-shadow: 0 2px 20px rgba(27,94,32,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 68px;
+  transition: var(--transition);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-logo {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--forest), var(--leaf));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--forest);
+  line-height: 1.2;
+  max-width: 300px;
+}
+
+.header-badge {
+  background: var(--solar);
+  color: var(--charcoal);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+/* ===========================
+   FLOATING HAMBURGER & NAV
+=========================== */
+#menu-btn {
+  position: fixed;
+  bottom: 2.5rem; left: 2rem;
+  z-index: 1100;
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--forest), var(--forest-light));
+  border: none; border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 24px rgba(27,94,32,0.35);
+  transition: var(--transition);
+  flex-direction: column;
+  gap: 5px;
+}
+#menu-btn:hover { transform: scale(1.08); box-shadow: 0 10px 32px rgba(27,94,32,0.45); }
+#menu-btn span {
+  display: block;
+  width: 22px; height: 2.5px;
+  background: #fff;
+  border-radius: 2px;
+  transition: var(--transition);
+}
+#menu-btn.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+#menu-btn.open span:nth-child(2) { opacity: 0; }
+#menu-btn.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+/* Overlay */
+#nav-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+#nav-overlay.active { opacity: 1; pointer-events: all; }
+
+/* Sidebar nav */
+#side-nav {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 320px;
+  background: var(--charcoal);
+  z-index: 1050;
+  transform: translateX(-100%);
+  transition: transform 0.38s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+#side-nav.open { transform: translateX(0); }
+
+.nav-header {
+  padding: 2rem 1.75rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, var(--forest), var(--forest-light));
+}
+.nav-header h2 {
+  font-family: 'Playfair Display', serif;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.nav-header p {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.75rem;
+  margin-top: 0.3rem;
+  font-family: 'DM Mono', monospace;
+}
+
+.nav-close {
+  position: absolute;
+  top: 1.25rem; right: 1.25rem;
+  background: rgba(255,255,255,0.15);
+  border: none; border-radius: 50%;
+  width: 32px; height: 32px;
+  color: #fff; font-size: 1.1rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.nav-close:hover { background: rgba(255,255,255,0.25); }
+
+.nav-links { padding: 1rem 0; flex: 1; }
+.nav-links a {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.7rem 1.75rem;
+  color: rgba(255,255,255,0.78);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: var(--transition);
+  border-left: 3px solid transparent;
+  position: relative;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--solar);
+  background: rgba(255,193,7,0.06);
+  border-left-color: var(--solar);
+}
+.nav-links a .nav-icon {
+  font-size: 1rem;
+  width: 22px; text-align: center;
+  flex-shrink: 0;
+}
+.nav-section-label {
+  padding: 1rem 1.75rem 0.3rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.35);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ===========================
+   HERO SECTION
+=========================== */
+#hero {
+  min-height: 100vh;
+  background: linear-gradient(145deg, #0a2e0d 0%, #1B5E20 40%, #1a4d4f 80%, #0d3340 100%);
+  position: relative;
+  display: flex; align-items: center;
+  overflow: hidden;
+  padding-top: 68px;
+}
+
+/* Animated background pattern */
+#hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(79,195,247,0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(76,175,80,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 50% 10%, rgba(255,193,7,0.06) 0%, transparent 40%);
+}
+
+/* Leaf pattern */
+#hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");
+  background-size: 60px 60px;
+}
+
+.hero-content {
+  position: relative; z-index: 2;
+  max-width: 1200px; margin: 0 auto;
+  padding: 4rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-text {}
+
+.hero-kicker {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,193,7,0.15);
+  border: 1px solid rgba(255,193,7,0.3);
+  color: var(--solar);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  animation: fadeInUp 0.6s ease both;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  animation: fadeInUp 0.6s 0.1s ease both;
+}
+.hero-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--solar), #ffdd57);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.82);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  animation: fadeInUp 0.6s 0.18s ease both;
+}
+
+.hero-kap-labels {
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.6s 0.25s ease both;
+}
+.kap-tag {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: 'DM Mono', monospace;
+}
+.kap-tag.k { background: rgba(79,195,247,0.18); color: var(--sky); border: 1px solid rgba(79,195,247,0.3); }
+.kap-tag.a { background: rgba(76,175,80,0.18); color: var(--leaf-light); border: 1px solid rgba(76,175,80,0.3); }
+.kap-tag.p { background: rgba(255,193,7,0.18); color: var(--solar); border: 1px solid rgba(255,193,7,0.3); }
+
+.hero-desc {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.68);
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+  animation: fadeInUp 0.6s 0.32s ease both;
+}
+
+.hero-actions {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  animation: fadeInUp 0.6s 0.4s ease both;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--solar);
+  color: var(--charcoal);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 14px 28px;
+  border-radius: 50px;
+  border: none; cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+  box-shadow: 0 6px 24px rgba(255,193,7,0.35);
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(255,193,7,0.45);
+  background: #ffca28;
+}
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 14px 28px;
+  border-radius: 50px;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.5);
+}
+
+/* Hero visual / stats panel */
+.hero-visual {
+  animation: fadeInUp 0.6s 0.2s ease both;
+}
+
+.hero-stats-card {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 24px;
+  padding: 2.5rem;
+  position: relative;
+}
+
+.stats-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.9);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+.stat-item {
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--radius-sm);
+  padding: 1.1rem;
+  text-align: center;
+}
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--solar);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.6);
+  margin-top: 0.3rem;
+  font-weight: 500;
+}
+
+.kap-model-mini {
+  display: flex; justify-content: space-between;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-sm);
+  padding: 1.2rem;
+}
+.kap-step {
+  flex: 1; text-align: center;
+  position: relative;
+}
+.kap-step::after {
+  content: '→';
+  position: absolute; right: -0.3rem; top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.3);
+  font-size: 0.8rem;
+}
+.kap-step:last-child::after { display: none; }
+.kap-step-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; font-weight: 900;
+  line-height: 1;
+}
+.kap-step.k .kap-step-letter { color: var(--sky); }
+.kap-step.a .kap-step-letter { color: var(--leaf-light); }
+.kap-step.p .kap-step-letter { color: var(--solar); }
+.kap-step-word {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.55);
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Scroll indicator */
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 2.5rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.75rem;
+  animation: fadeInUp 1s 0.8s ease both;
+  z-index: 2;
+}
+.scroll-line {
+  width: 1.5px; height: 48px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.35));
+  animation: scrollPulse 2s infinite;
+}
+
+/* ===========================
+   SECTION SYSTEM
+=========================== */
+.page-section {
+  padding: 6rem 0;
+  position: relative;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.page-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.page-section.bg-beige { background: var(--beige); }
+.page-section.bg-sand { background: var(--sand); }
+.page-section.bg-lightgray { background: var(--lightgray); }
+.page-section.bg-forest {
+  background: linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%);
+  color: #fff;
+}
+.page-section.bg-charcoal {
+  background: var(--charcoal);
+  color: #fff;
+}
+
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Alternating layout */
+.section-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+.section-body.reverse { direction: rtl; }
+.section-body.reverse > * { direction: ltr; }
+
+.section-text {}
+.section-image {}
+
+/* Section header */
+.section-overline {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--forest);
+  margin-bottom: 0.75rem;
+  padding: 4px 12px;
+  background: rgba(27,94,32,0.07);
+  border-radius: 20px;
+}
+.bg-forest .section-overline, .bg-charcoal .section-overline {
+  color: var(--solar);
+  background: rgba(255,193,7,0.12);
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+  color: var(--charcoal);
+  line-height: 1.25;
+  margin-bottom: 1.25rem;
+}
+.bg-forest .section-title, .bg-charcoal .section-title { color: #fff; }
+
+.section-text p {
+  font-size: 0.97rem;
+  color: var(--slate);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+.bg-forest .section-text p,
+.bg-charcoal .section-text p { color: rgba(255,255,255,0.78); }
+
+/* Image placeholder */
+.img-placeholder {
+  background: linear-gradient(135deg, var(--beige) 0%, var(--sand) 100%);
+  border-radius: var(--radius);
+  aspect-ratio: 8/5;
+  
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+/* --- CORRECTION : images dans les cadres --- */
+.img-placeholder img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.img-placeholder-inner {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.75rem;
+  opacity: 0.6;
+}
+.img-placeholder-icon {
+  font-size: 2.5rem;
+}
+.img-placeholder-label {
+
+  font-size: 0.8rem;
+  color: var(--slate);
+  font-weight: 600;
+  text-align: center;
+  padding: 0 1rem;
+}
+.img-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+  color: #fff;
+  padding: 1.25rem 1.25rem 1rem;
+  font-size: 0.78rem;
+}
+.img-caption strong { display: block; font-weight: 600; }
+.img-caption span { opacity: 0.7; }
+
+/* Info cards / feature lists */
+.feature-list { list-style: none; margin-top: 1.25rem; }
+.feature-list li {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.93rem;
+  color: var(--slate);
+  line-height: 1.6;
+}
+.feature-list li::before {
+  content: '✦';
+  color: var(--leaf);
+  font-size: 0.85rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+.bg-forest .feature-list li { color: rgba(255,255,255,0.78); }
+.bg-forest .feature-list li::before { color: var(--solar); }
+
+/* ===========================
+   KAP MODEL SECTION (Special)
+=========================== */
+.kap-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.kap-circle {
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  transition: var(--transition);
+  cursor: default;
+}
+.kap-circle:hover { transform: scale(1.06); z-index: 5; }
+.kap-circle.k {
+  background: linear-gradient(135deg, var(--sky-dark), var(--sky));
+  color: #fff;
+  margin-right: -30px;
+  box-shadow: 0 8px 32px rgba(79,195,247,0.4);
+}
+.kap-circle.a {
+  background: linear-gradient(135deg, var(--forest), var(--leaf));
+  color: #fff;
+  z-index: 2;
+  box-shadow: 0 8px 32px rgba(27,94,32,0.4);
+}
+.kap-circle.p {
+  background: linear-gradient(135deg, var(--solar-dark), var(--solar));
+  color: var(--charcoal);
+  margin-left: -30px;
+  box-shadow: 0 8px 32px rgba(255,193,7,0.4);
+}
+.kap-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.kap-word { font-size: 0.78rem; font-weight: 600; opacity: 0.85; margin-top: 0.25rem; }
+.kap-subword { font-size: 0.68rem; opacity: 0.65; }
+
+.kap-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+.kap-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border-top: 4px solid transparent;
+  transition: var(--transition);
+}
+.kap-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.kap-card.k { border-top-color: var(--sky); }
+.kap-card.a { border-top-color: var(--leaf); }
+.kap-card.p { border-top-color: var(--solar); }
+.kap-card-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+.kap-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--charcoal);
+  margin-bottom: 0.5rem;
+}
+.kap-card p {
+  font-size: 0.85rem;
+  color: var(--slate);
+  line-height: 1.65;
+}
+
+/* ===========================
+   CARDS SECTION (Tools, etc.)
+=========================== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  border: 1.5px solid rgba(27,94,32,0.06);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--forest), var(--leaf));
+}
+.card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+.card-icon {
+  width: 50px; height: 50px;
+  background: linear-gradient(135deg, rgba(27,94,32,0.08), rgba(76,175,80,0.1));
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.card h3 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--charcoal);
+  margin-bottom: 0.6rem;
+}
+.card p {
+  font-size: 0.875rem;
+  color: var(--slate);
+  line-height: 1.65;
+}
+
+/* ===========================
+   TABLE SECTION
+=========================== */
+.styled-table-wrap {
+  overflow-x: auto;
+  margin-top: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  background: var(--white);
+}
+.styled-table thead tr {
+  background: linear-gradient(135deg, var(--forest), var(--forest-light));
+  color: #fff;
+}
+.styled-table th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+.styled-table td {
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid rgba(27,94,32,0.07);
+  color: var(--slate);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.styled-table tbody tr:hover { background: rgba(27,94,32,0.02); }
+.styled-table td:first-child {
+  font-weight: 600;
+  color: var(--charcoal);
+}
+.td-k { color: var(--sky-dark) !important; font-weight: 600 !important; }
+.td-a { color: var(--forest) !important; font-weight: 600 !important; }
+.td-p { color: var(--solar-dark) !important; font-weight: 600 !important; }
+
+/* ===========================
+   TIMELINE SECTION
+=========================== */
+.timeline {
+  position: relative;
+  margin: 2rem 0;
+  padding-left: 2.5rem;
+}
+.timeline::before {
+  content: '';
+  position: absolute; left: 1rem; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--forest), var(--leaf), var(--sky));
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.7rem; top: 0.35rem;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--forest);
+  border: 3px solid var(--white);
+  box-shadow: 0 0 0 2px var(--forest);
+}
+.timeline-item:nth-child(2)::before { background: var(--leaf); box-shadow: 0 0 0 2px var(--leaf); }
+.timeline-item:nth-child(3)::before { background: var(--sky); box-shadow: 0 0 0 2px var(--sky); }
+.timeline-period {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--forest);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+}
+.timeline-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--charcoal);
+  margin-bottom: 0.4rem;
+}
+.timeline-desc {
+  font-size: 0.875rem;
+  color: var(--slate);
+  line-height: 1.65;
+}
+
+/* ===========================
+   FULL-WIDTH BANNER SECTION
+=========================== */
+.banner-section {
+  background: linear-gradient(135deg, var(--forest), var(--sky-dark));
+  padding: 5rem 2rem;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.banner-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='1.5' fill='rgba(255,255,255,0.05)'/%3E%3C/svg%3E");
+}
+.banner-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+.banner-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+.banner-content p {
+  font-size: 1.05rem;
+  opacity: 0.85;
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+/* ===========================
+   ACTORS SECTION
+=========================== */
+.actors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+.actor-card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  transition: var(--transition);
+}
+.actor-card:hover {
+  background: rgba(255,255,255,0.14);
+  transform: translateY(-4px);
+}
+.actor-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+.actor-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+.actor-card p { font-size: 0.8rem; color: rgba(255,255,255,0.65); line-height: 1.55; }
+
+/* ===========================
+   AUTHOR / PROFILE SECTION
+=========================== */
+#author-section {
+  background: var(--charcoal);
+  padding: 7rem 0;
+  color: #fff;
+}
+
+.author-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.author-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: sticky;
+  top: 90px;
+}
+.author-photo {
+  width: 120px; height: 120px;
+  border-radius: 10%;
+  margin: 0 auto 1.25rem;
+  background: linear-gradient(135deg, var(--forest), var(--leaf));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem;
+  color: #fff;
+  border: 4px solid rgba(255,255,255,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.author-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+.author-position {
+  font-size: 0.82rem;
+  color: var(--solar);
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+.author-contact {
+  list-style: none;
+  text-align: left;
+}
+.author-contact li {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.author-contact li:last-child { border-bottom: none; }
+.author-contact .ci { font-size: 1rem; width: 18px; text-align: center; }
+
+.author-details {}
+.author-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--solar);
+  margin-bottom: 0.5rem;
+  margin-top: 2.25rem;
+}
+.author-section-label:first-child { margin-top: 0; }
+.author-bio {
+  font-size: 0.93rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.edu-list { list-style: none; }
+.edu-list li {
+  display: flex; gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.edu-list li:last-child { border-bottom: none; margin-bottom: 0; }
+.edu-year {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--solar);
+  font-weight: 600;
+  min-width: 55px;
+  padding-top: 0.15rem;
+}
+.edu-info strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.edu-info span { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+.skills-pills {
+  display: flex; flex-wrap: wrap; gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.skill-pill {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.78);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* ===========================
+   SECTION CENTERED LAYOUT
+=========================== */
+.section-center {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+.section-center .section-title { text-align: center; }
+
+/* ===========================
+   METHODOLOGY STEPS
+=========================== */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+.step-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: var(--transition);
+  border: 1.5px solid rgba(27,94,32,0.06);
+}
+.step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.step-number {
+  position: absolute; top: -15px; left: 1.5rem;
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--forest), var(--leaf));
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(27,94,32,0.35);
+}
+.step-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--charcoal);
+  margin-bottom: 0.5rem;
+  margin-top: 0.25rem;
+}
+.step-desc { font-size: 0.85rem; color: var(--slate); line-height: 1.6; }
+
+/* ===========================
+   FOOTER
+=========================== */
+#site-footer {
+  background: #0d1f0f;
+  color: rgba(255,255,255,0.7);
+  padding: 4rem 2rem 2rem;
+}
+.footer-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.footer-brand {}
+.footer-logo-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.footer-logo {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--forest), var(--leaf));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: #fff;
+}
+.footer-brand-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  line-height: 1.3;
+}
+.footer-brand p {
+  font-size: 0.83rem;
+  line-height: 1.7;
+  max-width: 300px;
+}
+.footer-col h4 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  margin-bottom: 1.25rem;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 0.6rem; }
+.footer-links a {
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 0.83rem;
+  transition: var(--transition);
+}
+.footer-links a:hover { color: var(--solar); }
+.footer-contact-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.83rem;
+}
+.footer-contact-item span:first-child { font-size: 1rem; width: 18px; text-align: center; }
+.footer-bottom {
+  max-width: 1200px;
+  margin: 2rem auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.footer-copyright { font-size: 0.8rem; }
+.btn-back-top {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--forest);
+  color: #fff;
+  border: none; cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: var(--transition);
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-back-top:hover { background: var(--forest-light); transform: translateY(-2px); }
+
+/* ===========================
+   ANIMATIONS
+=========================== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.75; }
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 900px) {
+  .hero-content { grid-template-columns: 1fr; gap: 2.5rem; }
+  .hero-visual { display: none; }
+  .section-body, .section-body.reverse { grid-template-columns: 1fr; direction: ltr; gap: 2.5rem; }
+  .section-body.reverse .section-text { order: 1; }
+  .section-body.reverse .section-image { order: 2; }
+  .kap-cards { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .author-layout { grid-template-columns: 1fr; }
+  .author-card { position: static; }
+  #side-nav { width: 280px; }
+}
+@media (max-width: 600px) {
+  .hero-content { padding: 2.5rem 1.25rem; }
+  .section-inner { padding: 0 1.25rem; }
+  .page-section { padding: 4rem 0; }
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal-body { padding: 1.5rem; }
+  .modal-actions { padding: 1rem 1.5rem 1.5rem; flex-direction: column; }
+  .kap-diagram { flex-direction: column; }
+  .kap-circle { margin: -15px 0 !important; }
+  .kap-circle.k, .kap-circle.p { margin: -15px 0; }
+  .header-title { display: none; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===========================
+     STICKY HEADER
+=========================== -->
+<header id="site-header">
+  <div class="header-brand">
+    <div class="header-logo">E</div>
+    <div class="header-title">Dispositif d'Évaluation ErEDD — Madagascar</div>
+  </div>
+  <a href="https://tally.so/r/rjYrG5" class="header-badge" style="text-decoration:none; cursor:pointer;">📝 Participer à l'étude</a>
+</header>
+
+<!-- ===========================
+     FLOATING HAMBURGER
+=========================== -->
+<button id="menu-btn" aria-label="Ouvrir le menu">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- Nav overlay -->
+<div id="nav-overlay"></div>
+
+<!-- Side navigation -->
+<nav id="side-nav" role="navigation" aria-label="Navigation principale">
+  <div class="nav-header">
+    <button class="nav-close" id="nav-close" aria-label="Fermer">✕</button>
+    <h2>Dispositif d'Évaluation<br>en Changement de Comportement</h2>
+    <p>KAP · Madagascar · Primaire</p>
+  </div>
+  <div class="nav-links">
+    <div class="nav-section-label">Introduction</div>
+    <a href="#hero" class="nav-link"><span class="nav-icon">🏠</span>Accueil</a>
+    <a href="#introduction" class="nav-link"><span class="nav-icon">📖</span>Introduction</a>
+    <a href="#pourquoi-eredd" class="nav-link"><span class="nav-icon">🌿</span>Pourquoi l'ErEDD?</a>
+    <a href="#pourquoi-primaire" class="nav-link"><span class="nav-icon">🏫</span>Pourquoi au Primaire?</a>
+
+    <div class="nav-section-label">Modèle KAP</div>
+    <a href="#kap-model" class="nav-link"><span class="nav-icon">🔬</span>Modèle KAP</a>
+    <a href="#comment-evaluer" class="nav-link"><span class="nav-icon">📋</span>Comment Évaluer?</a>
+    <a href="#qui-evalue" class="nav-link"><span class="nav-icon">👥</span>Acteurs de l'Évaluation</a>
+
+    <div class="nav-section-label">Méthodologie</div>
+    <a href="#quand-evaluer" class="nav-link"><span class="nav-icon">🗓️</span>Quand Évaluer?</a>
+    <a href="#indicateurs" class="nav-link"><span class="nav-icon">📊</span>Indicateurs par Âge</a>
+    <a href="#outils" class="nav-link"><span class="nav-icon">🛠️</span>Outils d'Évaluation</a>
+
+    <div class="nav-section-label">Outils Détaillés</div>
+    <a href="#evaluation-ludique" class="nav-link"><span class="nav-icon">🎮</span>Évaluation Ludique</a>
+    <a href="#grilles-observation" class="nav-link"><span class="nav-icon">👁️</span>Grilles d'Observation</a>
+    <a href="#grilles-enquete" class="nav-link"><span class="nav-icon">📝</span>Grilles d'Enquête</a>
+    <a href="#evaluation-numerique" class="nav-link"><span class="nav-icon">💻</span>Évaluation Numérique</a>
+    <a href="#evaluation-pairs" class="nav-link"><span class="nav-icon">🤝</span>Évaluation par les Pairs</a>
+    <a href="#evaluation-terrain" class="nav-link"><span class="nav-icon">🌍</span>Évaluation Terrain</a>
+
+    <div class="nav-section-label">Analyse & Conclusion</div>
+    <a href="#analyse" class="nav-link"><span class="nav-icon">📈</span>Analyse des Données</a>
+    <a href="#recommendations" class="nav-link"><span class="nav-icon">💡</span>Recommandations</a>
+    <a href="#conclusion" class="nav-link"><span class="nav-icon">🏁</span>Conclusion</a>
+    <a href="#author-section" class="nav-link"><span class="nav-icon">👤</span>À propos du Concepteur</a>
+  </div>
+</nav>
+
+<!-- ===========================
+     HERO SECTION
+=========================== -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-kicker">🌿 Éducation Relative à l'Environnement</div>
+      <h1 class="hero-title">
+        Dispositif d'Évaluation en<br>
+        <em>Changement de Comportement</em><br>
+        au Niveau Primaire à Madagascar
+      </h1>
+      <p class="hero-subtitle">Suivant le modèle KAP</p>
+      <div class="hero-kap-labels">
+        <span class="kap-tag k">K — Knowledge · Connaissances</span>
+        <span class="kap-tag a">A — Attitude</span>
+        <span class="kap-tag p">P — Practice · Pratiques</span>
+      </div>
+      <p class="hero-desc">
+        Un dispositif structuré, simple et accessible pour mesurer concrètement l'évolution 
+        des comportements environnementaux des élèves du primaire à Madagascar, 
+        en s'appuyant sur le cadre KAP (Knowledge – Attitude – Practice).
+      </p>
+      <div class="hero-actions">
+        <a href="https://tally.so/r/rjYrG5" class="btn-primary" id="cta-btn" style="text-decoration:none;">
+          📝 Participer à l'étude
+        </a>
+        <a href="#introduction" class="btn-secondary">
+          Découvrir le dispositif ↓
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-stats-card">
+        <div class="stats-title">📊 Vue d'ensemble du dispositif</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Dimensions KAP évaluées</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">5+</div>
+            <div class="stat-label">Types d'outils d'évaluation</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Niveaux scolaires ciblés</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Adapté au contexte local</div>
+          </div>
+        </div>
+        <div class="kap-model-mini">
+          <div class="kap-step k">
+            <div class="kap-step-letter">K</div>
+            <div class="kap-step-word">Savoir</div>
+          </div>
+          <div class="kap-step a">
+            <div class="kap-step-letter">A</div>
+            <div class="kap-step-word">Savoir-être</div>
+          </div>
+          <div class="kap-step p">
+            <div class="kap-step-letter">P</div>
+            <div class="kap-step-word">Savoir-faire</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <span>Explorer</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ===========================
+     INTRODUCTION
+=========================== -->
+<section id="introduction" class="page-section bg-beige">
+  <div class="section-inner">
+    <div class="section-body">
+      <div class="section-text">
+        <div class="section-overline">📖 Introduction</div>
+        <h2 class="section-title">Une évaluation pour un impact réel et durable</h2>
+        <p>
+          L'éducation relative à l'environnement et au développement durable (ErEDD) ne se limite pas à 
+          transmettre des connaissances. Elle vise avant tout à <strong>faire évoluer les comportements</strong> 
+          des élèves dans leur vie quotidienne. Pourtant, dans la pratique, ces changements sont rarement 
+          évalués de manière structurée, notamment au niveau primaire.
+        </p>
+        <p>
+          À Madagascar, la diversité des contextes scolaires et le manque d'outils adaptés rendent 
+          l'évaluation de l'ErEDD difficile. Ce dispositif a été conçu pour répondre à ce besoin, 
+          en proposant une démarche <strong>simple, continue et accessible</strong>, permettant aux 
+          enseignants et aux acteurs éducatifs de mesurer concrètement l'évolution des comportements 
+          environnementaux des élèves.
+        </p>
+        <p>
+          Évaluer, dans ce cadre, ne signifie pas juger, mais <strong>comprendre, améliorer et renforcer</strong> 
+          les actions éducatives afin de garantir un impact réel et durable.
+        </p>
+        <ul class="feature-list">
+          <li>Approche centrée sur le changement comportemental mesurable</li>
+          <li>Outils adaptés aux réalités locales et rurales malgaches</li>
+          <li>Dispositif continu et progressif tout au long de l'année scolaire</li>
+        </ul>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/image1.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Contexte éducatif à Madagascar</strong>
+            <span>Photo de terrain · Crédit : Équipe de recherche ErEDD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     POURQUOI L'ErEDD
+=========================== -->
+<section id="pourquoi-eredd" class="page-section">
+  <div class="section-inner">
+    <div class="section-body reverse">
+      <div class="section-text">
+        <div class="section-overline">🌿 Contexte & Enjeux</div>
+        <h2 class="section-title">Pourquoi évaluer en ErEDD ?</h2>
+        <p>
+          L'ErEDD vise le <strong>changement de comportement</strong>, pas seulement l'acquisition 
+          de connaissances. Sans évaluation, l'impact réel des actions reste invisible et les 
+          investissements pédagogiques ne peuvent être améliorés.
+        </p>
+        <ul class="feature-list">
+          <li>L'évaluation permet d'améliorer les pratiques éducatives, pas de sanctionner les élèves</li>
+          <li>Elle aide à vérifier si les objectifs environnementaux sont réellement atteints dans la durée</li>
+          <li>Sans mesure structurée, il est impossible d'ajuster les interventions pédagogiques</li>
+          <li>L'évaluation rend visible ce qui est invisible : la progression des attitudes et comportements</li>
+        </ul>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/imagine.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>La chaîne de l'impact éducatif</strong>
+            <span>Infographie · Modèle KAP appliqué</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     POURQUOI AU PRIMAIRE
+=========================== -->
+<section id="pourquoi-primaire" class="page-section bg-lightgray">
+  <div class="section-inner">
+    <div class="section-center">
+      <div class="section-overline">🏫 Niveau Primaire</div>
+      <h2 class="section-title">Pourquoi cibler le niveau primaire ?</h2>
+      <p style="color:var(--slate); font-size:0.97rem; margin-top:0.75rem; line-height:1.8;">
+        Le primaire est le moment idéal pour former des citoyens engagés. Les habitudes prises à cet âge 
+        sont les plus durables, et les enfants scolarisés constituent un levier de changement pour 
+        toute la communauté.
+      </p>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>Habitudes durables</h3>
+        <p>À cet âge, les enfants <strong>forment des habitudes durables</strong> qui les accompagneront toute leur vie. C'est la fenêtre d'opportunité la plus efficace pour l'éducation environnementale.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👨‍👩‍👧‍👦</div>
+        <h3>Impact populationnel</h3>
+        <p>Les élèves représentent <strong>une grande partie de la population</strong> à Madagascar. Toucher les enfants, c'est toucher leurs familles et leurs communautés directement.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h3>Agents de changement</h3>
+        <p>Sensibilisés tôt, les enfants deviennent de <strong>véritables agents de changement</strong> dans leurs familles et communautés, propageant les bonnes pratiques environnementales.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h3>Maximum d'impact</h3>
+        <p>L'éducation dès le primaire permet <strong>d'atteindre le maximum d'impact</strong>, avant que les comportements ne se fixent définitivement à l'adolescence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     KAP MODEL SECTION
+=========================== -->
+<section id="kap-model" class="page-section bg-forest">
+  <div class="section-inner">
+    <div class="section-center">
+      <div class="section-overline">🔬 Fondements Théoriques</div>
+      <h2 class="section-title">Le Modèle KAP : Connaissances – Attitudes – Pratiques</h2>
+      <p style="color:rgba(255,255,255,0.78); font-size:0.97rem; margin-top:0.75rem; line-height:1.8;">
+        Le modèle CAP/KAP est un cadre d'évaluation reconnu internationalement qui permet de mesurer 
+        les trois dimensions fondamentales du comportement humain en lien avec l'environnement.
+      </p>
+    </div>
+    <div class="kap-diagram">
+      <div class="kap-circle k">
+        <div class="kap-letter">K</div>
+        <div class="kap-word">Knowledge</div>
+        <div class="kap-subword">Connaissances</div>
+      </div>
+      <div class="kap-circle a">
+        <div class="kap-letter">A</div>
+        <div class="kap-word">Attitude</div>
+        <div class="kap-subword">Valeurs & Perceptions</div>
+      </div>
+      <div class="kap-circle p">
+        <div class="kap-letter">P</div>
+        <div class="kap-word">Practice</div>
+        <div class="kap-subword">Comportements</div>
+      </div>
+    </div>
+    <div class="kap-cards">
+      <div class="kap-card k">
+        <div class="kap-card-icon">📚</div>
+        <h4>Connaissances / Savoir</h4>
+        <p><strong>Ce que l'élève sait</strong> — Niveaux cognitifs inférieurs : mémorisation, compréhension, application simple. Ce que l'élève comprend des enjeux environnementaux.</p>
+      </div>
+      <div class="kap-card a">
+        <div class="kap-card-icon">💚</div>
+        <h4>Attitudes / Savoir-être</h4>
+        <p><strong>Ce que l'élève pense et ressent</strong> — Niveaux cognitifs moyens : analyse, évaluation, appréciation critique. Son engagement et ses valeurs envers l'environnement.</p>
+      </div>
+      <div class="kap-card p">
+        <div class="kap-card-icon">🛠️</div>
+        <h4>Pratiques / Savoir-faire</h4>
+        <p><strong>Ce que l'élève fait réellement</strong> — Niveaux cognitifs supérieurs : création, synthèse, application concrète. Ses gestes éco-responsables quotidiens.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     COMMENT ÉVALUER
+=========================== -->
+<section id="comment-evaluer" class="page-section bg-beige">
+  <div class="section-inner">
+    <div class="section-body">
+      <div class="section-text">
+        <div class="section-overline">📋 Méthodologie</div>
+        <h2 class="section-title">Comment évaluer le changement de comportement ?</h2>
+        <p>
+          Une évaluation efficace en ErEDD doit répondre à des critères précis pour être pertinente, 
+          utilisable par tous les acteurs et adaptée au contexte spécifique de Madagascar.
+        </p>
+        <ul class="feature-list">
+          <li><strong>Simple et compréhensible</strong> pour tous les acteurs : enseignants, parents, communauté</li>
+          <li><strong>Continue et progressive</strong> — le changement de comportement n'est pas instantané</li>
+          <li><strong>Adaptée aux contextes locaux</strong> et ruraux de Madagascar</li>
+          <li>Répond aux questions : Qui évalue ? Qui est évalué ? Quand ? Comment ?</li>
+        </ul>
+        <p>
+          Ce dispositif apporte des réponses concrètes à chacune de ces questions, avec des outils 
+          directement utilisables sur le terrain par les enseignants malgaches.
+        </p>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/imagine.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Architecture du dispositif</strong>
+            <span>Schéma conceptuel · ErEDD Madagascar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     QUI ÉVALUE
+=========================== -->
+<section id="qui-evalue" class="page-section bg-charcoal">
+  <div class="section-inner">
+    <div class="section-center">
+      <div class="section-overline">👥 Acteurs de l'Évaluation</div>
+      <h2 class="section-title">Qui va évaluer et qui sont les évalués ?</h2>
+      <p style="color:rgba(255,255,255,0.72); font-size:0.97rem; margin-top:0.75rem; line-height:1.8;">
+        L'évaluation ne concerne pas seulement les élèves. Tous les acteurs influençant le changement 
+        de comportement — environnement, enseignants, parents, associations, hiérarchies — sont inclus.
+      </p>
+    </div>
+    <div class="actors-grid">
+      <div class="actor-card">
+        <div class="actor-icon">👦</div>
+        <h4>Les Élèves</h4>
+        <p>Au centre du dispositif. L'autoévaluation leur permet de réfléchir sur leurs comportements et prendre conscience de leurs progrès.</p>
+      </div>
+      <div class="actor-card">
+        <div class="actor-icon">👩‍🏫</div>
+        <h4>Les Enseignants</h4>
+        <p>Assurent un suivi direct et adaptent leurs méthodes en fonction de l'évolution de chaque élève tout au long de l'année.</p>
+      </div>
+      <div class="actor-card">
+        <div class="actor-icon">🏛️</div>
+        <h4>Hiérarchies Étatiques</h4>
+        <p>Supervisent et valident les résultats, garantissant la cohérence et la légitimité de l'évaluation à l'échelle nationale.</p>
+      </div>
+      <div class="actor-card">
+        <div class="actor-icon">🌿</div>
+        <h4>Associations & ONG</h4>
+        <p>Apportent leur expertise et un soutien concret aux établissements, enrichissant l'expérience pédagogique sur le terrain.</p>
+      </div>
+      <div class="actor-card">
+        <div class="actor-icon">🔍</div>
+        <h4>Évaluateurs Externes</h4>
+        <p>N'ayant pas participé aux activités d'apprentissage, ils offrent un regard objectif pour identifier les biais et proposer des améliorations.</p>
+      </div>
+      <div class="actor-card">
+        <div class="actor-icon">👨‍👩‍👧</div>
+        <h4>Les Parents</h4>
+        <p>Influencent directement le comportement durable des élèves à la maison. Leur rôle est évalué via des grilles d'enquête spécifiques.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     QUAND ÉVALUER
+=========================== -->
+<section id="quand-evaluer" class="page-section">
+  <div class="section-inner">
+    <div class="section-body reverse">
+      <div class="section-text">
+        <div class="section-overline">🗓️ Temporalité</div>
+        <h2 class="section-title">Quand évaluer ? Une évaluation continue</h2>
+        <p>
+          L'évaluation doit se faire tout au long du processus d'ErEDD, car le <strong>changement de 
+          comportement n'est pas instantané</strong> et nécessite du temps pour s'installer durablement.
+        </p>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-period">Phase 1 · Avant</div>
+            <div class="timeline-title">Évaluation Diagnostique</div>
+            <div class="timeline-desc">Permet de connaître le niveau initial des élèves, leurs connaissances, attitudes et comportements. Cela guide la planification des activités pédagogiques.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-period">Phase 2 · Pendant</div>
+            <div class="timeline-title">Évaluation Formative</div>
+            <div class="timeline-desc">Permet de suivre les progrès des élèves en temps réel, d'adapter les méthodes pédagogiques et de renforcer les activités qui fonctionnent.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-period">Phase 3 · Après</div>
+            <div class="timeline-title">Évaluation Sommative</div>
+            <div class="timeline-desc">Permet de mesurer l'atteinte des objectifs et le changement de comportement. Des évaluations annuelles permettent le suivi sur le long terme.</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/image3.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Calendrier d'évaluation</strong>
+            <span>Diagnostique → Formative → Sommative</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     INDICATEURS PAR ÂGE
+=========================== -->
+<section id="indicateurs" class="page-section bg-lightgray">
+  <div class="section-inner">
+    <div class="section-center">
+      <div class="section-overline">📊 Indicateurs du Changement</div>
+      <h2 class="section-title">Indicateurs par classe et par âge</h2>
+      <p style="color:var(--slate); font-size:0.97rem; margin-top:0.75rem; line-height:1.8;">
+        Basés sur les travaux de Piaget et les recherches récentes en éducation environnementale, 
+        ces indicateurs guident l'évaluation selon le développement cognitif de l'enfant.
+      </p>
+    </div>
+    <div class="styled-table-wrap">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Classe / Âge</th>
+            <th>📚 Savoirs (Connaissances)</th>
+            <th>💚 Savoir-être (Attitudes)</th>
+            <th>🛠️ Savoir-faire (Comportements)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Préscolaire–CP1/CP2<br><small style="color:var(--slate)">(4–7 ans)</small></td>
+            <td class="td-k">Reconnaître éléments de l'environnement proche · Gestes simples de propreté</td>
+            <td class="td-a">Respecter les règles de la classe · Être curieux des activités</td>
+            <td class="td-p">Trier déchets simples · Arroser plantes · Participer au rangement</td>
+          </tr>
+          <tr>
+            <td>CE<br><small style="color:var(--slate)">(8–9 ans)</small></td>
+            <td class="td-k">Identifier déchets recyclables · Comprendre santé & hygiène</td>
+            <td class="td-a">Montrer de l'intérêt pour l'environnement</td>
+            <td class="td-p">Trier déchets · Appliquer gestes d'hygiène</td>
+          </tr>
+          <tr>
+            <td>CM1<br><small style="color:var(--slate)">(9–10 ans)</small></td>
+            <td class="td-k">Comprendre notions de biodiversité locale</td>
+            <td class="td-a">Encourager camarades aux bonnes pratiques</td>
+            <td class="td-p">Participer à projets collectifs · Nettoyage de la cour</td>
+          </tr>
+          <tr>
+            <td>CM2<br><small style="color:var(--slate)">(10–11 ans)</small></td>
+            <td class="td-k">Connaître enjeux environnementaux plus larges</td>
+            <td class="td-a">Prendre des initiatives pour protéger l'environnement</td>
+            <td class="td-p">Organiser ou mener activités terrain (plantation, campagnes)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     OUTILS D'ÉVALUATION (Overview)
+=========================== -->
+<section id="outils" class="page-section bg-beige">
+  <div class="section-inner">
+    <div class="section-body">
+      <div class="section-text">
+        <div class="section-overline">🛠️ Types d'Outils</div>
+        <h2 class="section-title">Les outils d'évaluation en ErEDD</h2>
+        <p>
+          Pour évaluer le changement de comportement chez les élèves, on peut utiliser 
+          <strong>une grande variété d'outils</strong>. Les méthodes ludiques, participatives 
+          ou expérimentales permettent de rendre l'évaluation vivante et adaptée au contexte d'ErEDD.
+        </p>
+        <p>
+          <strong>À noter :</strong> les évaluations ordinaires comme les exercices, devoirs et 
+          examens restent aussi importantes pour mesurer les connaissances et compétences.
+        </p>
+        <ul class="feature-list">
+          <li><strong>Évaluation ludique / participative</strong> : Jeux de cartes, puzzles, théâtre, quiz</li>
+          <li><strong>Outils d'observation</strong> : Grilles, carnets de suivi, observation directe</li>
+          <li><strong>Collecte de données</strong> : Questionnaires, entretiens, focus groups</li>
+          <li><strong>Évaluation numérique</strong> : QCM, portfolios, présentations multimédia</li>
+          <li><strong>Pairs et autoévaluation</strong> : Checklists, feedback entre pairs</li>
+          <li><strong>Terrain expérientiel</strong> : Tri, jardinage, projets communautaires</li>
+        </ul>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/image12.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Boîte à outils de l'évaluateur</strong>
+            <span>De l'observation à l'évaluation numérique</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     ÉVALUATION LUDIQUE
+=========================== -->
+<section id="evaluation-ludique" class="page-section">
+  <div class="section-inner">
+    <div class="section-center">
+      <div class="section-overline">🎮 Évaluation Ludique & Culturelle</div>
+      <h2 class="section-title">Jeux, arts et culture malgache comme outils d'évaluation</h2>
+      <p style="color:var(--slate); font-size:0.97rem; margin-top:0.75rem; line-height:1.8;">
+        Ces outils permettent d'évaluer les connaissances, attitudes et comportements de manière 
+        <strong>interactive et motivante</strong>. Ils favorisent l'engagement des élèves et 
+        rendent l'évaluation plus proche de la pratique réelle.
+      </p>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🃏</div>
+        <h3>Jeux éducatifs ErEDD</h3>
+        <p>Cartes éducatives spéciales ErEDD, puzzles Kit Mad'ErE, jeu de l'oie éco-responsable, mémoire écologique, quiz en équipe. Évalue connaissances, attitudes et comportements de manière ludique.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎭</div>
+        <h3>Activités Créatives Malgaches</h3>
+        <p><em>Vakodrazana, Théâtre, Jijy, Kabary, Slam, Dessin, Angano, Marionnettes, Jeux de rôle</em> — Les expressions culturelles traditionnelles deviennent des révélateurs d'engagement environnemental.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>Ce qu'évaluent ces activités</h3>
+        <p>Les <strong>connaissances</strong> (messages et contenus transmis), les <strong>attitudes</strong> (valeurs, prise de position, sensibilité) et les <strong>comportements</strong> (engagement, cohérence entre discours et actions).</p>
+      </div>
+    </div>
+    <div style="margin-top: 3rem;">
+      <div class="section-body">
+        <div class="section-image">
+          <div class="img-placeholder">
+            <img src="images/image6.png" alt="Contexte éducatif à Madagascar">
+            <div class="img-caption">
+              <strong>Jeux de rôle éducatifs</strong>
+              <span>Séance d'évaluation ludique · Écoles primaires Madagascar</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-text">
+          <div class="section-overline">🌸 Culture & Évaluation</div>
+          <h3 class="section-title" style="font-size:1.6rem;">L'approche culturelle malgache</h3>
+          <p>
+            Intégrer les expressions culturelles traditionnelles malgaches dans le processus d'évaluation 
+            permet non seulement de respecter l'identité des élèves, mais aussi d'obtenir des réponses 
+            plus authentiques et moins scolaires.
+          </p>
+          <p>
+            Le <em>Kabary</em> (discours traditionnel) peut révéler la capacité d'un élève à argumenter 
+            en faveur de la protection de l'environnement. Le <em>Angano</em> (conte) peut illustrer 
+            les valeurs transmises par la famille et la communauté.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     GRILLES D'OBSERVATION
+=========================== -->
+<section id="grilles-observation" class="page-section bg-lightgray">
+  <div class="section-inner">
+    <div class="section-body reverse">
+      <div class="section-text">
+        <div class="section-overline">👁️ Observation</div>
+        <h2 class="section-title">Les Grilles d'Observation</h2>
+        <p>
+          Les grilles d'observation permettent d'évaluer les élèves <strong>en situation réelle</strong>, 
+          sans interrompre les activités. Elles sont particulièrement adaptées à l'ErEDD, car le 
+          changement recherché s'exprime principalement à travers des <strong>comportements observables</strong>.
+        </p>
+        <p>L'observation peut s'appuyer sur différentes méthodes selon le contexte :</p>
+        <ul class="feature-list">
+          <li><strong>Scan sampling</strong> : Observer tout le groupe à intervalles réguliers (5–10 min), adapté aux classes nombreuses</li>
+          <li><strong>Observation focalisée</strong> : Suivre un élève ou un petit groupe pendant une activité pour une analyse fine</li>
+          <li><strong>Observation continue</strong> : Sur toute la durée d'une séance, pour analyser la dynamique de groupe</li>
+          <li><strong>Observation ponctuelle</strong> : À des moments clés (début, milieu, fin) — adaptée aux ressources limitées</li>
+        </ul>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/image12.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Grille d'observation remplie</strong>
+            <span>Outil de terrain · Évaluation comportementale directe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem;">
+      <div class="section-overline">🏫 Observation de l'Environnement Scolaire</div>
+      <h3 style="font-family:'Playfair Display',serif; font-weight:700; font-size:1.4rem; color:var(--charcoal); margin: 0.5rem 0 1.5rem;">Observer l'environnement pour détecter les comportements</h3>
+      <div class="cards-grid" style="margin-top:0;">
+        <div class="card">
+          <div class="card-icon">🏫</div>
+          <h3>Salle de Classe</h3>
+          <p>Hygiène et propreté (sol, tables, matériel), organisation de l'espace (classe rangée, affichages pédagogiques). Indicateurs visuels de comportements collectifs.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌳</div>
+          <h3>Cour & Espaces Communs</h3>
+          <p>Propreté générale (cours, toilettes, aires de jeux), comportements collectifs des élèves, respect de l'environnement, gestion des déchets, respect des règles.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Utilisable sur les 3 Phases</h3>
+          <p>Grille utilisable pour l'évaluation diagnostique, formative et sommative. Permet de comparer les données dans le temps et de suivre l'évolution des comportements.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     GRILLES D'ENQUÊTE
+=========================== -->
+<section id="grilles-enquete" class="page-section bg-beige">
+  <div class="section-inner">
+    <div class="section-body">
+      <div class="section-text">
+        <div class="section-overline">📝 Collecte de Données</div>
+        <h2 class="section-title">Les Grilles d'Enquête — Taxonomie de Bloom</h2>
+        <p>
+          Les grilles d'enquête permettent de collecter des informations sur les <strong>connaissances, 
+          attitudes et comportements</strong> des élèves à travers des questions structurées. 
+          La taxonomie de Bloom (révisée) guide la construction des indicateurs.
+        </p>
+        <ul class="feature-list">
+          <li><strong>Pour les élèves</strong> : Identifier, nommer, expliquer, trier, appliquer selon leur niveau cognitif</li>
+          <li><strong>Pour les enseignants</strong> : Aligner leurs connaissances / valeurs / pratiques pédagogiques avec celles des élèves</li>
+          <li><strong>Pour les parents</strong> : Situations hypothétiques concrètes pour révéler les réactions réelles</li>
+          <li><strong>Pour les hiérarchies locales</strong> : Évaluer le soutien institutionnel aux initiatives scolaires</li>
+          <li><strong>Pour les associations/ONG</strong> : Mesurer l'impact des interventions de terrain</li>
+        </ul>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/image13.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Questionnaire KAP élève</strong>
+            <span>Basé sur la Taxonomie de Bloom révisée</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="styled-table-wrap" style="margin-top: 3rem;">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Question / Activité (exemple)</th>
+            <th>Niveau Bloom</th>
+            <th>Verbe observable / Ce que ça évalue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-k">📚 Connaissances / Savoir</td>
+            <td>Identifie les types de déchets recyclables dans différents bacs</td>
+            <td>Mémorisation / Compréhension</td>
+            <td><strong>Identifier, Nommer</strong> → Ce que l'élève sait sur le recyclage</td>
+          </tr>
+          <tr>
+            <td class="td-a">💚 Attitudes / Savoir-être</td>
+            <td>Explique pourquoi trier les déchets est important et décrit ses actions</td>
+            <td>Analyse / Évaluation</td>
+            <td><strong>Expliquer, Décrire, Justifier</strong> → Engagement et valeurs de l'élève</td>
+          </tr>
+          <tr>
+            <td class="td-p">🛠️ Comportements / Savoir-faire</td>
+            <td>Trie effectivement les déchets dans les bacs corrects à l'école ou à la maison</td>
+            <td>Application / Création</td>
+            <td><strong>Trier, Appliquer, Organiser</strong> → Gestes éco-responsables réels</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     ÉVALUATION NUMÉRIQUE
+=========================== -->
+<section id="evaluation-numerique" class="page-section">
+  <div class="section-inner">
+    <div class="section-body reverse">
+      <div class="section-text">
+        <div class="section-overline">💻 Numérique & Écrit</div>
+        <h2 class="section-title">Évaluation Numérique et Écrite</h2>
+        <p>
+          Certains acteurs utilisent déjà ces grilles <strong>directement sur supports numériques</strong>, 
+          facilitant la collecte, la comparaison et l'analyse des données.
+        </p>
+        <ul class="feature-list">
+          <li><strong>Connaissances</strong> : Tests écrits (QCM, questions ouvertes), questionnaires numériques adaptés au niveau</li>
+          <li><strong>Attitudes</strong> : Questionnaires sur les valeurs, motivations et perceptions · Auto-évaluation et réflexion</li>
+          <li><strong>Comportements</strong> : Questions portant sur les pratiques quotidiennes · Déclarations d'actions réalisées</li>
+        </ul>
+        <p>
+          Les grilles peuvent être utilisées en <strong>format papier</strong> ou en <strong>format 
+          numérique</strong> (applications sur tablette ou téléphone), selon les ressources disponibles 
+          dans l'établissement.
+        </p>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/image16.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Évaluation numérique sur tablette</strong>
+            <span>Alternatives papier et numérique disponibles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     ÉVALUATION PAR LES PAIRS
+=========================== -->
+<section id="evaluation-pairs" class="page-section bg-lightgray">
+  <div class="section-inner">
+    <div class="section-body">
+      <div class="section-text">
+        <div class="section-overline">🤝 Évaluation Participative</div>
+        <h2 class="section-title">Évaluation par les Pairs</h2>
+        <p>
+          Ce type d'évaluation montre que l'élève n'est pas seulement évalué, mais devient 
+          <strong>acteur de l'évaluation</strong>, ce qui est parfaitement aligné avec l'ErEDD 
+          et l'objectif de changement durable des comportements.
+        </p>
+        <ul class="feature-list">
+          <li><strong>Connaissances</strong> : Évaluation entre élèves de la compréhension des notions environnementales, échanges pour consolider les apprentissages</li>
+          <li><strong>Attitudes</strong> : Observation des attitudes positives (respect, coopération, engagement) · Développement de l'esprit critique</li>
+          <li><strong>Comportements</strong> : Observation des pratiques concrètes des camarades · Feedback constructif entre pairs</li>
+        </ul>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/image17.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Évaluation par les pairs en action</strong>
+            <span>L'élève évaluateur = agent de changement</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     ÉVALUATION TERRAIN
+=========================== -->
+<section id="evaluation-terrain" class="page-section bg-forest">
+  <div class="section-inner">
+    <div class="section-body reverse">
+      <div class="section-text">
+        <div class="section-overline">🌍 Terrain & Expérience</div>
+        <h2 class="section-title">Évaluation Expérientielle sur le Terrain</h2>
+        <p style="color:rgba(255,255,255,0.82);">
+          Évaluer les connaissances, attitudes et comportements à travers des <strong>situations réelles et 
+          vécues</strong>, en créant des moments concrets où les élèves peuvent exprimer et mettre en 
+          pratique leurs apprentissages.
+        </p>
+        <ul class="feature-list">
+          <li>Mobilisation des notions environnementales lors d'activités réelles</li>
+          <li>Engagement volontaire et motivation des élèves pendant les activités terrain</li>
+          <li>Mise en œuvre de pratiques concrètes : gestion des déchets, protection des espaces, sensibilisation</li>
+          <li>Application des gestes éco-responsables dans des situations authentiques</li>
+        </ul>
+        <p style="color:rgba(255,255,255,0.72);">
+          <strong style="color:var(--solar);">Exemples de moments d'évaluation terrain :</strong> 
+          Journée internationale de la biodiversité, Journée mondiale de l'environnement, 
+          sorties pédagogiques, nettoyages de sites, plantations, campagnes de sensibilisation.
+        </p>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder" style="background: linear-gradient(135deg, rgba(27,94,32,0.3), rgba(76,175,80,0.15));">
+          <img src="images/image18.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>Plantation d'arbres — Évaluation comportementale</strong>
+            <span>Journée mondiale de l'environnement · Madagascar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     ANALYSE DES DONNÉES
+=========================== -->
+<section id="analyse" class="page-section">
+  <div class="section-inner">
+    <div class="section-center">
+      <div class="section-overline">📈 Analyse & Traitement</div>
+      <h2 class="section-title">Comment analyser les données collectées ?</h2>
+      <p style="color:var(--slate); font-size:0.97rem; margin-top:0.75rem; line-height:1.8;">
+        Assurer une analyse cohérente et complète des informations collectées à partir de tous les outils, 
+        pour aboutir à des décisions pédagogiques éclairées et améliorer le dispositif.
+      </p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-title">Collecte & Organisation</div>
+        <div class="step-desc">Regrouper par outil et niveau (enseignants, parents, élèves, environnement). Structurer selon Savoir / Savoir-être / Savoir-faire. Centraliser dans une base ou tableur.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-title">Analyse Quantitative & Qualitative</div>
+        <div class="step-desc">Scores des questionnaires, fréquences de comportements, comparaison par classe et par période. Observations descriptives, commentaires des pairs, notes d'enseignants.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-title">Triangulation & Comparaison</div>
+        <div class="step-desc">Vérifier la cohérence entre ce que l'élève sait, pense et fait. Comparer les résultats entre classes, entre périodes, entre outils (papier, numérique, terrain, pairs).</div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <div class="step-title">Synthèse & Restitution</div>
+        <div class="step-desc">Créer des tableaux et graphiques synthétiques. Identifier les points forts et besoins d'amélioration. Utiliser les résultats pour ajuster les interventions pédagogiques.</div>
+      </div>
+    </div>
+    <div style="margin-top: 3rem;">
+      <div class="section-body">
+        <div class="section-image">
+          <div class="img-placeholder">
+            <img src="images/image77.png" alt="Contexte éducatif à Madagascar">
+            <div class="img-caption">
+              <strong>Dashboard d'analyse des résultats</strong>
+              <span>Suivi longitudinal des comportements environnementaux</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-text">
+          <div class="section-overline">📉 Méthodes d'Analyse</div>
+          <h3 class="section-title" style="font-size:1.5rem;">Quantitatif + Qualitatif = Vision Complète</h3>
+          <p>
+            L'analyse <strong>quantitative</strong> traite les scores des questionnaires écrits ou 
+            numériques et les fréquences de comportements observés. Elle permet des comparaisons 
+            statistiques par classe et par période.
+          </p>
+          <p>
+            L'analyse <strong>qualitative</strong> s'appuie sur les observations descriptives, 
+            les commentaires des pairs et les notes d'enseignants. Elle permet de comprendre 
+            le <em>pourquoi</em> derrière les chiffres.
+          </p>
+          <p>
+            La <strong>triangulation</strong> des données est essentielle pour vérifier la cohérence 
+            entre ce que l'élève sait, pense et fait, et ce que les influents transmettent.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     RECOMMENDATIONS
+=========================== -->
+<section id="recommendations" class="page-section bg-sand">
+  <div class="section-inner">
+    <div class="section-center">
+      <div class="section-overline">💡 Recommandations</div>
+      <h2 class="section-title">Recommandations pour la mise en œuvre</h2>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>Adapter au contexte local</h3>
+        <p>Chaque établissement a ses propres réalités. Les outils doivent être adaptés au milieu rural ou urbain, aux ressources disponibles et à la langue d'enseignement (malgache ou français).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h3>Répéter les évaluations</h3>
+        <p>Utiliser les mêmes grilles avant, pendant et après les interventions. La comparaison longitudinale est essentielle pour mesurer le changement comportemental réel.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <h3>Impliquer tous les acteurs</h3>
+        <p>L'évaluation isolée des élèves n'est pas suffisante. Impliquer enseignants, parents, associations et hiérarchies locales pour une vision complète de l'écosystème éducatif.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h3>Combiner papier et numérique</h3>
+        <p>Proposer des alternatives numériques aux grilles papier pour les établissements équipés. La numérisation facilite l'analyse comparative et le partage des résultats.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌿</div>
+        <h3>Valoriser la culture malgache</h3>
+        <p>Intégrer le Vakodrazana, le Kabary, l'Angano et autres expressions culturelles traditionnelles pour une évaluation authentique et culturellement ancrée.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h3>Partager les résultats</h3>
+        <p>Restituer les résultats à toutes les parties prenantes : élèves, enseignants, parents, administration. La transparence renforce la confiance et l'engagement de tous.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     BANNER / CTA
+=========================== -->
+<div class="banner-section page-section">
+  <div class="banner-content">
+    <h2>Rejoignez l'étude nationale</h2>
+    <p>
+      Ce dispositif est en cours de déploiement dans plusieurs établissements primaires à Madagascar. 
+      Votre participation — que vous soyez enseignant, parent, acteur associatif ou chercheur — 
+      contribue à améliorer l'éducation environnementale pour des milliers d'enfants malgaches.
+    </p>
+    <a href="https://tally.so/r/rjYrG5" class="btn-primary" id="cta-btn-2" style="margin: 0 auto; display:inline-flex; text-decoration:none;">
+      📝 Participer à l'étude
+    </a>
+  </div>
+</div>
+
+<!-- ===========================
+     CONCLUSION
+=========================== -->
+<section id="conclusion" class="page-section bg-beige">
+  <div class="section-inner">
+    <div class="section-body reverse">
+      <div class="section-text">
+        <div class="section-overline">🏁 Conclusion</div>
+        <h2 class="section-title">Un dispositif au service d'un avenir durable pour Madagascar</h2>
+        <p>
+          Ce dispositif d'évaluation en changement de comportement constitue une réponse concrète 
+          et adaptée aux besoins réels de l'éducation environnementale primaire à Madagascar. 
+          En combinant le modèle KAP avec des outils variés et culturellement ancrés, il permet 
+          de mesurer ce qui compte vraiment : l'évolution réelle des comportements.
+        </p>
+        <p>
+          L'évaluation n'est pas une fin en soi — c'est un outil au service d'une éducation 
+          plus efficace, plus équitable et plus durable. En comprenant ce que les élèves savent, 
+          pensent et font, nous pouvons construire des interventions qui ont un vrai impact sur leur vie 
+          quotidienne et sur la préservation de la biodiversité exceptionnelle de Madagascar.
+        </p>
+        <ul class="feature-list">
+          <li>Un cadre éprouvé (KAP) adapté aux réalités malgaches</li>
+          <li>Des outils simples, accessibles et culturellement pertinents</li>
+          <li>Une vision collaborative incluant tous les acteurs éducatifs</li>
+          <li>Un engagement pour un changement comportemental durable et mesurable</li>
+        </ul>
+      </div>
+      <div class="section-image">
+        <div class="img-placeholder">
+          <img src="images/image1.png" alt="Contexte éducatif à Madagascar">
+          <div class="img-caption">
+            <strong>L'avenir de Madagascar</strong>
+            <span>Ces enfants sont les gardiens de leur île</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================
+     AUTHOR SECTION
+=========================== -->
+<section id="author-section">
+  <div class="section-inner">
+    <div class="section-overline" style="color:var(--solar); background:rgba(255,193,7,0.12);">👤 À propos du Concepteur</div>
+    <h2 class="section-title" style="color:#fff; font-family:'Playfair Display',serif; font-size:2rem; font-weight:800; margin: 0.5rem 0 3rem;">Profil du Concepteur du Dispositif</h2>
+    <div class="author-layout">
+      <div class="author-card">
+        <div class="author-photo">
+          <img src="images/PDP CV.jpg" style="width:100%; height:100%; border-radius: 10px; object-fit:cover; display:block;">
+        </div>
+        <div class="author-name">Malalatiana Anjaranantenaina Riampenosoa</div>
+        <div class="author-position">Spécialiste en Éducation Environnementale<br>& Évaluation Pédagogique</div>
+        <ul class="author-contact">
+          <li><span class="ci">📧</span><span>malalatianaens@gmail.com</span></li>
+          <li><span class="ci">📞</span><span>+261 34 36 644 98</span></li>
+          <li><span class="ci">🌍</span><span>Antananarivo, Madagascar</span></li>
+          <li><span class="ci">🔗</span><span>https://www.linkedin.com/in/malalatiana-anjaranantenaina-741827216/</span></li>
+          <li><span class="ci">🏛️</span><span> Institution: Centre de Recherche en Education Environnementale</span></li>
+        </ul>
+      </div>
+
+      <div class="author-details">
+        <div class="author-section-label">Biographie</div>
+        <p class="author-bio">
+          Malalatiana est une experte en éducation relative à l'environnement et au 
+          développement durable, spécialisée dans la conception de dispositifs d'évaluation adaptés 
+          aux contextes éducatifs des pays de l'Océan Indien. Fort(e) d'une expérience terrain 
+          significative à Madagascar, elle a développé ce dispositif pour répondre à un vide 
+          méthodologique criant dans l'évaluation des comportements environnementaux au primaire.
+        </p>
+        <p class="author-bio">
+          Sa démarche s'inscrit dans une vision holistique de l'éducation, où l'évaluation est 
+          au service de l'amélioration continue des pratiques pédagogiques, et non de la sanction 
+          des élèves ou des enseignants.
+        </p>
+
+        <div class="author-section-label">Formation Académique</div>
+        <ul class="edu-list">
+          <li>
+            <div class="edu-year">2022</div>
+            <div class="edu-info">
+              <strong>Diplôme de niveau Master</strong>
+              <span>École Normale Supérieure d'Antananarivo  — Spécialité : Formation de Professeur Spécialisé en Sciences de la Vie 
+                et de la Terre</span>
+            </div>
+          </li>
+          <li>
+            <div class="edu-year">2018</div>
+            <div class="edu-info">
+              <strong>Licence </strong>
+              <span>École Normale Supérieure d'Antananarivo — Mention : Formation d’Enseignants de Sciences de la Vie et de la 
+                Terre</span>
+            </div>
+          </li>
+          <li>
+            <div class="edu-year">2018</div>
+            <div class="edu-info">
+              <strong>Baccalauréat -Série D</strong>
+              <span>Lycée de Sainte Marie</span>
+            </div>
+          </li>
+        </ul>
+
+        <div class="author-section-label">Expérience Professionnelle</div>
+        <ul class="edu-list">
+          <li>
+            <div class="edu-year">2018–</div>
+            <div class="edu-info">
+              <strong>Formatrice & Responsable technique- ErEDD</strong>
+              <span>Centre de Recherche en Education Environnementale — Développement de dispositifs d'évaluation en ErEDD</span>
+            </div>
+          </li>
+          <li>
+            <div class="edu-year">2023</div>
+            <div class="edu-info">
+              <strong>Enseignante en Sciences de la Vie et de la Terre</strong>
+              <span>Ministère de l'Education Nationale </span>
+            </div>
+          </li>
+        </ul>
+
+        <div class="author-section-label">Domaines de Recherche</div>
+        <div class="skills-pills">
+          <span class="skill-pill">Éducation environnementale</span>
+          <span class="skill-pill">Modèle KAP</span>
+          <span class="skill-pill">Évaluation comportementale</span>
+          <span class="skill-pill">Pédagogie primaire</span>
+          <span class="skill-pill">Développement durable</span>
+          <span class="skill-pill">Contextes ruraux malgaches</span>
+          <span class="skill-pill">Changement comportemental</span>
+          <span class="skill-pill">Biodiversité Madagascar</span>
+        </div>
+
+        
+
+        <div class="author-section-label">Compétences Clés</div>
+        <div class="skills-pills">
+          <span class="skill-pill">Conception de dispositifs</span>
+          <span class="skill-pill">Recherche-action</span>
+          <span class="skill-pill">Formation d'enseignants</span>
+          <span class="skill-pill">Analyse qualitative</span>
+          <span class="skill-pill">Analyse quantitative</span>
+          <span class="skill-pill">Gestion de projet éducatif</span>
+        </div>
+
+    
+
+<!-- ===========================
+     FOOTER
+=========================== -->
+<footer id="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo-row">
+        <div class="footer-logo">E</div>
+        <div class="footer-brand-title">Dispositif d'Évaluation<br>en Changement de Comportement</div>
+      </div>
+      <p>
+        Un dispositif structuré pour mesurer concrètement l'évolution des comportements 
+        environnementaux des élèves du primaire à Madagascar, suivant le modèle KAP.
+      </p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul class="footer-links">
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#kap-model">Modèle KAP</a></li>
+        <li><a href="#outils">Outils d'Évaluation</a></li>
+        <li><a href="#analyse">Analyse des Données</a></li>
+        <li><a href="#recommendations">Recommandations</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Outils</h4>
+      <ul class="footer-links">
+        <li><a href="#evaluation-ludique">Évaluation Ludique</a></li>
+        <li><a href="#grilles-observation">Grilles d'Observation</a></li>
+        <li><a href="#grilles-enquete">Grilles d'Enquête</a></li>
+        <li><a href="#evaluation-numerique">Évaluation Numérique</a></li>
+        <li><a href="#evaluation-pairs">Évaluation par les Pairs</a></li>
+        <li><a href="#evaluation-terrain">Évaluation Terrain</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <div class="footer-contact-item">
+        <span>📧</span>
+        <span>malalatianaens@gmail.com</span>
+      </div>
+      <div class="footer-contact-item">
+        <span>📞</span>
+        <span>+261 34 36 644 98</span>
+      </div>
+      <div class="footer-contact-item">
+        <span>🌍</span>
+        <span>Antananarivo, Madagascar</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copyright">
+      © 2024–2026 Dispositif KAP · ErEDD Madagascar · Malalatiana Anjaranantenaina Riampenosoa · Tous droits réservés
+    </div>
+    <button class="btn-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      ↑ Retour en haut
+    </button>
+  </div>
+</footer>
+
+<!-- ===========================
+     FORM MODAL
+=========================== -->
+
+
+
+<!-- ===========================
+     JAVASCRIPT
+=========================== -->
+<script>
+/* ===========================
+   NAV TOGGLE
+=========================== */
+const menuBtn = document.getElementById('menu-btn');
+const sideNav = document.getElementById('side-nav');
+const navOverlay = document.getElementById('nav-overlay');
+const navClose = document.getElementById('nav-close');
+
+function openNav() {
+  menuBtn.classList.add('open');
+  sideNav.classList.add('open');
+  navOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeNav() {
+  menuBtn.classList.remove('open');
+  sideNav.classList.remove('open');
+  navOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+menuBtn.addEventListener('click', () => {
+  sideNav.classList.contains('open') ? closeNav() : openNav();
+});
+navClose.addEventListener('click', closeNav);
+navOverlay.addEventListener('click', closeNav);
+
+// Smooth scroll + close nav on nav link click
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      closeNav();
+      setTimeout(() => {
+        const offset = 80;
+        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }, 200);
+    }
+  });
+});
+
+/* ===========================
+   ACTIVE SECTION HIGHLIGHTING
+=========================== */
+function updateActiveNav() {
+  const sections = document.querySelectorAll('section[id], div[id="hero"]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  let currentId = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      currentId = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + currentId) {
+      link.classList.add('active');
+    }
+  });
+}
+window.addEventListener('scroll', updateActiveNav);
+
+/* ===========================
+   INTERSECTION OBSERVER (Fade-in)
+=========================== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.page-section').forEach(section => {
+  observer.observe(section);
+});
+
+// Banner section
+document.querySelectorAll('.banner-section').forEach(section => {
+  section.classList.add('page-section');
+  observer.observe(section);
+});
+
+/* ===========================
+   HEADER SHRINK ON SCROLL
+=========================== */
+const header = document.getElementById('site-header');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 80) {
+    header.style.height = '60px';
+    header.style.boxShadow = '0 4px 24px rgba(27,94,32,0.12)';
+  } else {
+    header.style.height = '68px';
+    header.style.boxShadow = '0 2px 20px rgba(27,94,32,0.07)';
+  }
+});
+
+/* ===========================
+   STAGGERED CARD ANIMATIONS
+=========================== */
+const cardObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const cards = entry.target.querySelectorAll('.card, .kap-card, .step-card, .actor-card');
+      cards.forEach((card, i) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(24px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, i * 100);
+      });
+      cardObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.05 });
+
+document.querySelectorAll('.cards-grid, .kap-cards, .steps-grid, .actors-grid').forEach(grid => {
+  cardObserver.observe(grid);
+});
+
+/* ===========================
+   SMOOTH SCROLL FOR ALL ANCHORS
+=========================== */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href === '#') return;
+    const target = document.querySelector(href);
+    if (target) {
+      e.preventDefault();
+      const offset = 80;
+      const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  });
+});
+
+/* ===========================
+   ANIMATE KAP CIRCLES ON SCROLL
+=========================== */
+const kapObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const circles = entry.target.querySelectorAll('.kap-circle');
+      circles.forEach((c, i) => {
+        c.style.opacity = '0';
+        c.style.transform = 'scale(0.7)';
+        c.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        setTimeout(() => {
+          c.style.opacity = '1';
+          c.style.transform = 'scale(1)';
+        }, i * 150);
+      });
+      kapObs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+const kapDiagram = document.querySelector('.kap-diagram');
+if (kapDiagram) kapObs.observe(kapDiagram);
+
+/* Initial page load */
+console.log('✅ Dispositif d\'Évaluation KAP — Madagascar · Prototype chargé avec succès');
+</script>
+</body>
+</html>
